@@ -1,6 +1,7 @@
 package kae.demo.marketplacecms.author.domain.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -8,15 +9,21 @@ import java.util.StringJoiner;
 /** */
 public class Document {
 
-  @Id private String id;
+  @Id private final String id;
 
-  private DocumentType type;
+  private final DocumentType type;
 
-  private String name;
+  private final String name;
 
-  private Banner banner;
+  private final Banner banner;
 
-  Document() {}
+  @PersistenceConstructor
+  private Document(String id, DocumentType type, String name, Banner banner) {
+    this.id = id;
+    this.type = type;
+    this.name = name;
+    this.banner = banner;
+  }
 
   private Document(Builder builder) {
     id = builder.id;
@@ -53,6 +60,10 @@ public class Document {
     }
 
     return joiner.toString();
+  }
+
+  public Document withId(String id) {
+    return new Document(id, type, name, banner);
   }
 
   public static Builder newBuilder() {

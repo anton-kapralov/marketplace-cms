@@ -1,15 +1,21 @@
 package kae.demo.marketplacecms.author.domain.model;
 
+import org.springframework.data.annotation.PersistenceConstructor;
+
 import java.util.StringJoiner;
 
 /** */
 public class Banner {
 
-  private String title;
+  private final String title;
 
-  private String subtitle;
+  private final String subtitle;
 
-  Banner() {}
+  @PersistenceConstructor
+  public Banner(String title, String subtitle) {
+    this.title = title;
+    this.subtitle = subtitle;
+  }
 
   private Banner(Builder builder) {
     title = builder.title;
