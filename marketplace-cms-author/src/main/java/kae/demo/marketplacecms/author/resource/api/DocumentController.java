@@ -31,6 +31,6 @@ public class DocumentController {
     return service
         .findById(id)
         .map(ResponseEntity::ok)
-        .onErrorReturn(ResponseEntity.notFound().build());
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
 }
