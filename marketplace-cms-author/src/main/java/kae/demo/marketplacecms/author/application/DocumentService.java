@@ -4,9 +4,8 @@ import kae.demo.marketplacecms.author.application.representation.CreateBannerCom
 import kae.demo.marketplacecms.author.domain.model.Document;
 import kae.demo.marketplacecms.author.infrastructure.persistence.DocumentRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /** */
 @Service
@@ -18,15 +17,15 @@ public class DocumentService {
     this.repository = repository;
   }
 
-  public List<Document> getAll() {
+  public Flux<Document> getAll() {
     return repository.findAll();
   }
 
-  public Document createBanner(CreateBannerCommand command) {
+  public Mono<Document> createBanner(CreateBannerCommand command) {
     return repository.save(command.asDocument());
   }
 
-  public Optional<Document> findById(String id) {
+  public Mono<Document> findById(String id) {
     return repository.findById(id);
   }
 }

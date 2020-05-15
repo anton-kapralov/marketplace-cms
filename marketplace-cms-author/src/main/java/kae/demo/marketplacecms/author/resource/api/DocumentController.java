@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /** */
 @RestController
@@ -22,15 +22,15 @@ public class DocumentController {
   }
 
   @GetMapping
-  public List<Document> getAll() {
+  public Flux<Document> getAll() {
     return service.getAll();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Document> get(@PathVariable("id") String id) {
+  public Mono<ResponseEntity<Document>> get(@PathVariable("id") String id) {
     return service
         .findById(id)
         .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+        .onErrorReturn(ResponseEntity.notFound().build());
   }
 }

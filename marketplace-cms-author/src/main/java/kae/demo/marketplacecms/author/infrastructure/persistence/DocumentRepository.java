@@ -1,14 +1,13 @@
 package kae.demo.marketplacecms.author.infrastructure.persistence;
 
 import kae.demo.marketplacecms.author.domain.model.Document;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 /** */
 @Repository
-public interface DocumentRepository extends MongoRepository<Document, String> {
+public interface DocumentRepository extends ReactiveMongoRepository<Document, String> {
 
-  Optional<Document> findByName(String name);
+  Mono<Document> findByName(String name);
 }
