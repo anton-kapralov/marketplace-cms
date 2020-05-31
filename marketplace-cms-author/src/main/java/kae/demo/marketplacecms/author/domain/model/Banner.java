@@ -1,8 +1,11 @@
 package kae.demo.marketplacecms.author.domain.model;
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.StringJoiner;
 
 /** */
@@ -14,19 +17,28 @@ public class Banner {
 
   private final Content content;
 
+  private final List<ContentVariation> contentVariations;
+
   @PersistenceConstructor
-  private Banner(String id, String name, Content content) {
+  private Banner(
+      String id, String name, Content content, Collection<ContentVariation> contentVariations) {
     this.id = id;
     this.name = name;
     this.content = content;
+    this.contentVariations =
+        contentVariations != null
+            ? contentVariations instanceof ImmutableList
+                ? (ImmutableList<ContentVariation>) contentVariations
+                : ImmutableList.copyOf(contentVariations)
+            : ImmutableList.of();
   }
 
   private Banner(Builder builder) {
-    this(builder.id, builder.name, builder.content);
+    this(builder.id, builder.name, builder.content, builder.contentVariations.build());
   }
 
   public Banner withId(String id) {
-    return new Banner(id, name, content);
+    return new Banner(id, name, content, contentVariations);
   }
 
   public String getId() {
@@ -39,6 +51,10 @@ public class Banner {
 
   public Content getContent() {
     return content;
+  }
+
+  public ImmutableList<ContentVariation> getContentVariations() {
+    return (ImmutableList<ContentVariation>) contentVariations;
   }
 
   @Override
@@ -54,12 +70,25 @@ public class Banner {
     return new Builder();
   }
 
+  public static Builder newBuilder(Banner another) {
+    return new Builder(another);
+  }
+
   public static final class Builder {
     private String id;
     private String name;
     private Content content;
+    private final ImmutableList.Builder<ContentVariation> contentVariations =
+        ImmutableList.builder();
 
     private Builder() {}
+
+    public Builder(Banner another) {
+      id = another.id;
+      name = another.name;
+      content = another.content;
+      contentVariations.addAll(another.contentVariations);
+    }
 
     public Builder setId(String val) {
       id = val;
@@ -73,6 +102,16 @@ public class Banner {
 
     public Builder setContent(Content val) {
       content = val;
+      return this;
+    }
+
+    public Builder addContentVariation(ContentVariation contentVariation) {
+      contentVariations.add(contentVariation);
+      return this;
+    }
+
+    public Builder addAllContentVariations(Iterable<ContentVariation> contentVariations) {
+      this.contentVariations.addAll(contentVariations);
       return this;
     }
 
@@ -134,6 +173,72 @@ public class Banner {
 
       public Content build() {
         return new Content(this);
+      }
+    }
+  }
+
+  public static class ContentVariation {
+    private final List<String> targetIds;
+    private final Content content;
+
+    @PersistenceConstructor
+    private ContentVariation(Collection<String> targetIds, Content content) {
+      this.targetIds =
+          targetIds != null
+              ? targetIds instanceof ImmutableList
+                  ? (ImmutableList<String>) targetIds
+                  : ImmutableList.copyOf(targetIds)
+              : ImmutableList.of();
+      this.content = content;
+    }
+
+    private ContentVariation(Builder builder) {
+      this(builder.targetIds.build(), builder.content);
+    }
+
+    public ImmutableList<String> getTargetIds() {
+      return (ImmutableList<String>) targetIds;
+    }
+
+    public Content getContent() {
+      return content;
+    }
+
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", ContentVariation.class.getSimpleName() + "[", "]")
+          .add("target=" + targetIds)
+          .add("content=" + content)
+          .toString();
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public static final class Builder {
+      private final ImmutableList.Builder<String> targetIds = ImmutableList.builder();
+      private Content content;
+
+      private Builder() {}
+
+      public Builder addTargetId(String targetId) {
+        targetIds.add(targetId);
+        return this;
+      }
+
+      public Builder addAllTargetIds(Iterable<String> targetIds) {
+        this.targetIds.addAll(targetIds);
+        return this;
+      }
+
+      public Builder setContent(Content val) {
+        content = val;
+        return this;
+      }
+
+      public ContentVariation build() {
+        return new ContentVariation(this);
       }
     }
   }

@@ -2,6 +2,7 @@ package kae.demo.marketplacecms.author.resource.api;
 
 import kae.demo.marketplacecms.author.application.BannerService;
 import kae.demo.marketplacecms.author.application.representation.CreateBannerCommand;
+import kae.demo.marketplacecms.author.application.representation.CreateBannerVariationCommand;
 import kae.demo.marketplacecms.author.domain.model.Banner;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,22 @@ public class BannerController {
         .doOnNext(System.out::println)
         .map(ResponseEntity::ok)
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+  }
+
+  @PostMapping(path = "/{id}/variation", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<?>> createContentVariation(
+      @PathVariable("id") String id,
+      @RequestBody @Valid CreateBannerVariationCommand command,
+      UriComponentsBuilder uriComponentsBuilder) {
+    return service
+        .createContentVariation(id, command)
+        .map(
+            banner ->
+                ResponseEntity.created(
+                        uriComponentsBuilder
+                            .path("/api/banner/{id}")
+                            .buildAndExpand(banner.getId())
+                            .toUri())
+                    .build());
   }
 }
