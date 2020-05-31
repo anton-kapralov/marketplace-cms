@@ -1,7 +1,7 @@
-package kae.demo.marketplacecms.author.domain.model;
+package kae.demo.marketplacecms.author.application.representation;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import kae.demo.marketplacecms.author.domain.model.Banner;
+import kae.demo.marketplacecms.author.domain.model.DocumentType;
 
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -9,21 +9,13 @@ import java.util.StringJoiner;
 /** */
 public class Document {
 
-  @Id private final String id;
+  private final String id;
 
   private final DocumentType type;
 
   private final String name;
 
   private final Banner banner;
-
-  @PersistenceConstructor
-  private Document(String id, DocumentType type, String name, Banner banner) {
-    this.id = id;
-    this.type = type;
-    this.name = name;
-    this.banner = banner;
-  }
 
   private Document(Builder builder) {
     id = builder.id;
@@ -62,15 +54,20 @@ public class Document {
     return joiner.toString();
   }
 
-  public Document withId(String id) {
-    return new Document(id, type, name, banner);
+  public static Document fromBanner(Banner banner) {
+    return Document.newBuilder()
+        .setId(banner.getId())
+        .setType(DocumentType.BANNER)
+        .setName(banner.getName())
+        .setBanner(banner)
+        .build();
   }
 
-  public static Builder newBuilder() {
+  private static Builder newBuilder() {
     return new Builder();
   }
 
-  public static final class Builder {
+  private static final class Builder {
     private String id;
     private DocumentType type;
     private String name;
@@ -98,7 +95,7 @@ public class Document {
       return this;
     }
 
-    public Document build() {
+    private Document build() {
       return new Document(this);
     }
   }

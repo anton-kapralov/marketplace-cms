@@ -1,8 +1,8 @@
 package kae.demo.marketplacecms.author.application;
 
-import kae.demo.marketplacecms.author.application.representation.CreateBannerCommand;
-import kae.demo.marketplacecms.author.domain.model.Document;
-import kae.demo.marketplacecms.author.infrastructure.persistence.DocumentRepository;
+import kae.demo.marketplacecms.author.application.representation.Document;
+import kae.demo.marketplacecms.author.domain.model.DocumentType;
+import kae.demo.marketplacecms.author.infrastructure.persistence.BannerRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -11,21 +11,22 @@ import reactor.core.publisher.Mono;
 @Service
 public class DocumentService {
 
-  private final DocumentRepository repository;
+  private final BannerRepository bannerRepository;
 
-  public DocumentService(DocumentRepository repository) {
-    this.repository = repository;
+  public DocumentService(BannerRepository bannerRepository) {
+    this.bannerRepository = bannerRepository;
   }
 
   public Flux<Document> getAll() {
-    return repository.findAll();
+    return bannerRepository.findAll().map(Document::fromBanner);
   }
 
-  public Mono<Document> createBanner(CreateBannerCommand command) {
-    return repository.save(command.asDocument());
-  }
-
-  public Mono<Document> findById(String id) {
-    return repository.findById(id);
+  public Mono<Document> findByIdType(String id, DocumentType type) {
+    switch (type) {
+      case BANNER:
+        return bannerRepository.findById(id).map(Document::fromBanner);
+      default:
+        return Mono.empty();
+    }
   }
 }

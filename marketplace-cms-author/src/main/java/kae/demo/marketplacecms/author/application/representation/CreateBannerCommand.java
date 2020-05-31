@@ -1,8 +1,6 @@
 package kae.demo.marketplacecms.author.application.representation;
 
 import kae.demo.marketplacecms.author.domain.model.Banner;
-import kae.demo.marketplacecms.author.domain.model.Document;
-import kae.demo.marketplacecms.author.domain.model.DocumentType;
 
 /** */
 public class CreateBannerCommand {
@@ -19,11 +17,10 @@ public class CreateBannerCommand {
     this.subtitle = subtitle;
   }
 
-  public Document asDocument() {
-    return Document.newBuilder()
-        .setType(DocumentType.BANNER)
+  public Banner asBanner() {
+    return Banner.newBuilder()
         .setName(name)
-        .setBanner(Banner.newBuilder().setTitle(title).setSubtitle(subtitle).build())
+        .setContent(Banner.Content.newBuilder().setTitle(title).setSubtitle(subtitle).build())
         .build();
   }
 }

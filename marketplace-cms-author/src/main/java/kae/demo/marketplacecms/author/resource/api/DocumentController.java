@@ -1,12 +1,10 @@
 package kae.demo.marketplacecms.author.resource.api;
 
 import kae.demo.marketplacecms.author.application.DocumentService;
-import kae.demo.marketplacecms.author.domain.model.Document;
+import kae.demo.marketplacecms.author.application.representation.Document;
+import kae.demo.marketplacecms.author.domain.model.DocumentType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -27,9 +25,10 @@ public class DocumentController {
   }
 
   @GetMapping("/{id}")
-  public Mono<ResponseEntity<Document>> get(@PathVariable("id") String id) {
+  public Mono<ResponseEntity<Document>> get(
+      @PathVariable("id") String id, @RequestParam("type") DocumentType type) {
     return service
-        .findById(id)
+        .findByIdType(id, type)
         .map(ResponseEntity::ok)
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
