@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static kae.demo.marketplacecms.author.infrastructure.util.ImmutableCollections.toImmutableList;
+
 /** */
 public class Banner {
 
@@ -25,12 +27,7 @@ public class Banner {
     this.id = id;
     this.name = name;
     this.content = content;
-    this.contentVariations =
-        contentVariations != null
-            ? contentVariations instanceof ImmutableList
-                ? (ImmutableList<ContentVariation>) contentVariations
-                : ImmutableList.copyOf(contentVariations)
-            : ImmutableList.of();
+    this.contentVariations = toImmutableList(contentVariations);
   }
 
   private Banner(Builder builder) {
@@ -183,12 +180,7 @@ public class Banner {
 
     @PersistenceConstructor
     private ContentVariation(Collection<String> targetIds, Content content) {
-      this.targetIds =
-          targetIds != null
-              ? targetIds instanceof ImmutableList
-                  ? (ImmutableList<String>) targetIds
-                  : ImmutableList.copyOf(targetIds)
-              : ImmutableList.of();
+      this.targetIds = toImmutableList(targetIds);
       this.content = content;
     }
 
